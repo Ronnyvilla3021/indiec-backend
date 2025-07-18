@@ -8,7 +8,7 @@ function safeDecrypt(data) {
     try {
         return descifrarDatos(data);
     } catch (error) {
-        console.error('Error al descifrar datos:', error.message);
+        console.error('Error');
         return ''; // Devolver una cadena vacía si ocurre un error
     }
 }
@@ -19,8 +19,8 @@ ropaCtl.mostrarRopa = async (req, res) => {
         const [listaRopa] = await sql.promise().query('SELECT * FROM ropas');
         return res.json(listaRopa);
     } catch (error) {
-        console.error('Error al mostrar ropa:', error);
-        return res.status(500).json({ message: 'Error al obtener la ropa', error: error.message });
+        console.error('Error');
+        return res.status(500).json({ message: 'Error', error: error.message });
     }
 };
 
@@ -31,7 +31,7 @@ ropaCtl.crearRopa = async (req, res) => {
 
         // Validar que los campos requeridos no estén vacíos
         if (!nombre || !artista || !tipo || !talla) {
-            return res.status(400).json({ message: 'Todos los campos son requeridos' });
+            return res.status(400).json({ message: 'Error' });
         }
 
         const envioSQL = {
@@ -44,10 +44,10 @@ ropaCtl.crearRopa = async (req, res) => {
         };
 
         const nuevaRopa = await orm.ropa.create(envioSQL);
-        return res.status(201).json({ message: 'Éxito al guardar', idRopa: nuevaRopa.idRopa });
+        return res.status(201).json({ message: 'Success', idRopa: nuevaRopa.idRopa });
     } catch (error) {
-        console.error('Error al crear ropa:', error);
-        return res.status(500).json({ message: 'Error al guardar la ropa', error: error.message });
+        console.error('Error');
+        return res.status(500).json({ message: 'Error', error: error.message });
     }
 };
 
@@ -59,7 +59,7 @@ ropaCtl.actualizarRopa = async (req, res) => {
 
         // Validar que los campos requeridos no estén vacíos
         if (!nombre || !artista || !tipo || !talla) {
-            return res.status(400).json({ message: 'Todos los campos son requeridos' });
+            return res.status(400).json({ message: 'Error' });
         }
 
         const [result] = await sql.promise().query(`
@@ -69,13 +69,13 @@ ropaCtl.actualizarRopa = async (req, res) => {
         `, [nombre, artista, tipo, talla, new Date().toLocaleString(), id]);
 
         if (result.affectedRows === 0) {
-            return res.status(404).json({ message: 'Ropa no encontrada' });
+            return res.status(404).json({ message: 'Error' });
         }
 
-        return res.json({ message: 'Ropa actualizada exitosamente' });
+        return res.json({ message: 'Success' });
     } catch (error) {
-        console.error('Error al actualizar ropa:', error);
-        return res.status(500).json({ message: 'Error al actualizar la ropa', error: error.message });
+        console.error('Error');
+        return res.status(500).json({ message: 'Error', error: error.message });
     }
 };
 
@@ -91,13 +91,13 @@ ropaCtl.eliminarRopa = async (req, res) => {
         `, [new Date().toLocaleString(), id]);
 
         if (result.affectedRows === 0) {
-            return res.status(404).json({ message: 'Ropa no encontrada' });
+            return res.status(404).json({ message: 'Error' });
         }
 
-        return res.json({ message: 'Ropa eliminada exitosamente' });
+        return res.json({ message: 'Success' });
     } catch (error) {
-        console.error('Error al eliminar ropa:', error);
-        return res.status(500).json({ message: 'Error al eliminar la ropa', error: error.message });
+        console.error('Error');
+        return res.status(500).json({ message: 'Error', error: error.message });
     }
 };
 

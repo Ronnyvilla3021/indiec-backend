@@ -9,7 +9,7 @@ const descifrarSeguro = (dato) => {
   try {
     return dato ? descifrarDatos(dato) : '';
   } catch (error) {
-    console.error('Error al descifrar:', error);
+    console.error('Error', error);
     return '';
   }
 };
@@ -21,7 +21,6 @@ clienteCtl.mostrarClientes = async (req, res) => {
         
         const clientesCompletos = await Promise.all(
             listaClientes.map(async (cliente) => {
-                // Obtener datos adicionales de MongoDB
                 const clienteMongo = await mongo.clienteModel.findOne({ 
                     idClienteSql: cliente.idClientes 
                 });
@@ -31,7 +30,6 @@ clienteCtl.mostrarClientes = async (req, res) => {
                     cedulaCliente: descifrarSeguro(cliente.cedulaCliente),
                     nombreCliente: descifrarSeguro(cliente.nombreCliente),
                     usernameCliente: descifrarSeguro(cliente.usernameCliente),
-                    // La contraseña no se debería enviar desencriptada
                     detallesMongo: clienteMongo ? {
                         direccionCliente: descifrarSeguro(clienteMongo.direccionCliente),
                         telefonoCliente: descifrarSeguro(clienteMongo.telefonoCliente),
@@ -44,8 +42,8 @@ clienteCtl.mostrarClientes = async (req, res) => {
 
         return res.json(clientesCompletos);
     } catch (error) {
-        console.error('Error al mostrar clientes:', error);
-        return res.status(500).json({ message: 'Error al obtener los clientes', error: error.message });
+        console.error('Error', error);
+        return res.status(500).json({ message: 'Error', error: error.message });
     }
 };
 
@@ -55,22 +53,19 @@ clienteCtl.crearCliente = async (req, res) => {
         const { cedulaCliente, nombreCliente, usernameCliente, passwordCliente, 
                 direccionCliente, telefonoCliente, emailCliente, tipoCliente } = req.body;
 
-        // Validación de campos requeridos
         if (!cedulaCliente || !nombreCliente || !usernameCliente || !passwordCliente) {
-            return res.status(400).json({ message: 'Datos básicos del cliente son obligatorios' });
+            return res.status(400).json({ message: 'Error' });
         }
 
-        // Crear en SQL con datos encriptados
         const nuevoCliente = await orm.cliente.create({
             cedulaCliente: cifrarDatos(cedulaCliente),
             nombreCliente: cifrarDatos(nombreCliente),
             usernameCliente: cifrarDatos(usernameCliente),
-            passwordCliente: cifrarDatos(passwordCliente), // En producción usa bcrypt para contraseñas
+            passwordCliente: cifrarDatos(passwordCliente),
             stadoCliente: 'activo',
             createCliente: new Date().toLocaleString(),
         });
 
-        // Crear en MongoDB con datos encriptados
         if (direccionCliente || telefonoCliente || emailCliente) {
             await mongo.clienteModel.create({
                 direccionCliente: cifrarDatos(direccionCliente || ''),
@@ -82,14 +77,14 @@ clienteCtl.crearCliente = async (req, res) => {
         }
 
         return res.status(201).json({ 
-            message: 'Cliente creado exitosamente',
+            message: 'Success',
             idCliente: nuevoCliente.idClientes
         });
 
     } catch (error) {
-        console.error('Error al crear cliente:', error);
+        console.error('Error', error);
         return res.status(500).json({ 
-            message: 'Error al crear el cliente', 
+            message: 'Error', 
             error: error.message 
         });
     }
@@ -102,12 +97,10 @@ clienteCtl.actualizarCliente = async (req, res) => {
         const { cedulaCliente, nombreCliente, usernameCliente, 
                 direccionCliente, telefonoCliente, emailCliente } = req.body;
 
-        // Validar campos
         if (!cedulaCliente || !nombreCliente || !usernameCliente) {
-            return res.status(400).json({ message: 'Datos básicos son obligatorios' });
+            return res.status(400).json({ message: 'Error' });
         }
 
-        // Actualizar en SQL (datos principales)
         await sql.promise().query(
             `UPDATE clientes SET 
                 cedulaCliente = ?, 
@@ -124,7 +117,6 @@ clienteCtl.actualizarCliente = async (req, res) => {
             ]
         );
 
-        // Actualizar en MongoDB (datos adicionales)
         if (direccionCliente || telefonoCliente || emailCliente) {
             await mongo.clienteModel.updateOne(
                 { idClienteSql: id },
@@ -138,11 +130,11 @@ clienteCtl.actualizarCliente = async (req, res) => {
             );
         }
 
-        return res.json({ message: 'Cliente actualizado exitosamente' });
+        return res.json({ message: 'Success' });
 
     } catch (error) {
-        console.error('Error al actualizar cliente:', error);
-        return res.status(500).json({ message: 'Error al actualizar', error: error.message });
+        console.error('Error', error);
+        return res.status(500).json({ message: 'Error', error: error.message });
     }
 };
 
@@ -159,10 +151,10 @@ clienteCtl.eliminarCliente = async (req, res) => {
             [new Date().toLocaleString(), id]
         );
 
-        return res.json({ message: 'Cliente desactivado exitosamente' });
+        return res.json({ message: 'Success' });
     } catch (error) {
-        console.error('Error al eliminar cliente:', error);
-        return res.status(500).json({ message: 'Error al desactivar', error: error.message });
+        console.error('Error', error);
+        return res.status(500).json({ message: 'Error', error: error.message });
     }
 };
 

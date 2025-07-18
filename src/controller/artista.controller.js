@@ -25,10 +25,10 @@ artistaCtl.obtenerArtistas = async (req, res) => {
             })
         );
 
-        return res.apiResponse(artistasCompletos, 200, 'Artistas obtenidos exitosamente');
+        return res.apiResponse(artistasCompletos, 'Succes');
     } catch (error) {
-        console.error('Error al obtener artistas:', error);
-        return res.apiError('Error interno del servidor', 500);
+        console.error('Error', error);
+        return res.apiError('Error ');
     }
 };
 
@@ -44,7 +44,7 @@ artistaCtl.crearArtista = async (req, res) => {
         );
 
         if (existeArtista.length > 0) {
-            return res.apiError('El artista ya existe con ese correo', 400);
+            return res.apiError('Error');
         }
 
         // Crear en SQL
@@ -73,12 +73,12 @@ artistaCtl.crearArtista = async (req, res) => {
         return res.apiResponse(
             { idArtista }, 
             201, 
-            'Artista creado exitosamente'
+            'Succes'
         );
 
     } catch (error) {
-        console.error('Error al crear artista:', error);
-        return res.apiError('Error al crear el artista', 500);
+        console.error('Error');
+        return res.apiError('Error ');
     }
 };
 
@@ -93,7 +93,7 @@ artistaCtl.obtenerArtistaPorId = async (req, res) => {
         );
 
         if (artista.length === 0) {
-            return res.apiError('Artista no encontrado', 404);
+            return res.apiError('Error');
         }
 
         const artistaMongo = await mongo.artistaModel.findOne({ 
@@ -108,10 +108,10 @@ artistaCtl.obtenerArtistaPorId = async (req, res) => {
             fotoPerfil: artistaMongo?.fotoPerfil || ''
         };
 
-        return res.apiResponse(artistaCompleto, 200, 'Artista encontrado');
+        return res.apiResponse(artistaCompleto,'Succes');
     } catch (error) {
-        console.error('Error al obtener artista:', error);
-        return res.apiError('Error interno del servidor', 500);
+        console.error('Error' );
+        return res.apiError('Error');
     }
 };
 
@@ -140,8 +140,8 @@ artistaCtl.actualizarArtista = async (req, res) => {
 
         return res.apiResponse(null, 200, 'Artista actualizado exitosamente');
     } catch (error) {
-        console.error('Error al actualizar artista:', error);
-        return res.apiError('Error al actualizar el artista', 500);
+        console.error('Error ', error);
+        return res.apiError('Error');
     }
 };
 
@@ -156,10 +156,10 @@ artistaCtl.eliminarArtista = async (req, res) => {
             WHERE idArtista = ?
         `, [new Date().toLocaleString(), id]);
 
-        return res.apiResponse(null, 200, 'Artista eliminado exitosamente');
+        return res.apiResponse(null, 200, 'Succes');
     } catch (error) {
-        console.error('Error al eliminar artista:', error);
-        return res.apiError('Error al eliminar el artista', 500);
+        console.error('Error ', error);
+        return res.apiError('Error ');
     }
 };
 

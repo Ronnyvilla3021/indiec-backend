@@ -8,10 +8,10 @@ auxiliaresCtl.obtenerGeneros = async (req, res) => {
             where: { estado: 'activo' },
             order: [['nombreGenero', 'ASC']]
         });
-        return res.apiResponse(generos, 200, 'Géneros obtenidos exitosamente');
+        return res.apiResponse(generos, 'Succes');
     } catch (error) {
-        console.error('Error al obtener géneros:', error);
-        return res.apiError('Error interno del servidor', 500);
+        console.error('Error', error);
+        return res.apiError('Error');
     }
 };
 
@@ -28,8 +28,8 @@ auxiliaresCtl.crearGenero = async (req, res) => {
         
         return res.apiResponse(nuevoGenero, 201, 'Género creado exitosamente');
     } catch (error) {
-        console.error('Error al crear género:', error);
-        return res.apiError('Error al crear el género', 500);
+        console.error('Error');
+        return res.apiError('Error');
     }
 };
 
@@ -42,10 +42,10 @@ auxiliaresCtl.obtenerTallas = async (req, res) => {
             where: { estado: 'activo' },
             order: [['nombreTalla', 'ASC']]
         });
-        return res.apiResponse(tallas, 200, 'Tallas obtenidas exitosamente');
+        return res.apiResponse(tallas,'Succes');
     } catch (error) {
-        console.error('Error al obtener tallas:', error);
-        return res.apiError('Error interno del servidor', 500);
+        console.error('Error ', );
+        return res.apiError('Error');
     }
 };
 

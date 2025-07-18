@@ -24,10 +24,10 @@ cancionCtl.obtenerCanciones = async (req, res) => {
             })
         );
 
-        return res.apiResponse(cancionesCompletas, 200, 'Canciones obtenidas exitosamente');
+        return res.apiResponse(cancionesCompletas, 200, 'Succes');
     } catch (error) {
-        console.error('Error al obtener canciones:', error);
-        return res.apiError('Error interno del servidor', 500);
+        console.error('Error ', error);
+        return res.apiError('Error ');
     }
 };
 
@@ -64,12 +64,12 @@ cancionCtl.crearCancion = async (req, res) => {
         return res.apiResponse(
             { idCancion }, 
             201, 
-            'Canción creada exitosamente'
+            'Succes'
         );
 
     } catch (error) {
-        console.error('Error al crear canción:', error);
-        return res.apiError('Error al crear la canción', 500);
+        console.error('Error ');
+        return res.apiError('Error ');
     }
 };
 
@@ -96,10 +96,10 @@ cancionCtl.obtenerCancionesPorArtista = async (req, res) => {
             })
         );
 
-        return res.apiResponse(cancionesCompletas, 200, 'Canciones del artista obtenidas exitosamente');
+        return res.apiResponse(cancionesCompletas, 'Succes');
     } catch (error) {
-        console.error('Error al obtener canciones por artista:', error);
-        return res.apiError('Error interno del servidor', 500);
+        console.error('Error ');
+        return res.apiError('Error ');
     }
 };
 

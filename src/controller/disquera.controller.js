@@ -1,7 +1,7 @@
 const orm = require('../Database/dataBase.orm');
 const sql = require('../Database/dataBase.sql');
 const mongo = require('../Database/dataBaseMongose');
-const { cifrarDatos, descifrarDatos } = require('../lib/encrypDates');
+const { cifrarDatos } = require('../lib/encrypDates');
 
 const disqueraCtl = {};
 
@@ -13,7 +13,7 @@ disqueraCtl.obtenerPerfilDisquera = async (req, res) => {
         `);
 
         if (perfilDisquera.length === 0) {
-            return res.apiError('Perfil de disquera no encontrado', 404);
+            return res.apiError('Error', 404);
         }
 
         const disqueraMongo = await mongo.perfilDisqueraModel.findOne({ 
@@ -25,10 +25,10 @@ disqueraCtl.obtenerPerfilDisquera = async (req, res) => {
             detallesMongo: disqueraMongo
         };
 
-        return res.apiResponse(perfilCompleto, 200, 'Perfil de disquera obtenido');
+        return res.apiResponse(perfilCompleto, 200, 'Success');
     } catch (error) {
-        console.error('Error al obtener perfil disquera:', error);
-        return res.apiError('Error interno del servidor', 500);
+        console.error('Error', error);
+        return res.apiError('Error', 500);
     }
 };
 
@@ -37,7 +37,6 @@ disqueraCtl.gestionarPerfilDisquera = async (req, res) => {
     try {
         const { nombreDisquera, correo, direccion, telefono, descripcion } = req.body;
 
-        // Verificar si ya existe un perfil
         const [perfilExistente] = await sql.promise().query(
             'SELECT * FROM perfil_disqueras WHERE estado = "activo" LIMIT 1'
         );
@@ -45,7 +44,6 @@ disqueraCtl.gestionarPerfilDisquera = async (req, res) => {
         let idDisquera;
 
         if (perfilExistente.length > 0) {
-            // Actualizar existente
             idDisquera = perfilExistente[0].idDisquera;
             await sql.promise().query(`
                 UPDATE perfil_disqueras 
@@ -53,7 +51,6 @@ disqueraCtl.gestionarPerfilDisquera = async (req, res) => {
                 WHERE idDisquera = ?
             `, [nombreDisquera, correo, new Date().toLocaleString(), idDisquera]);
 
-            // Actualizar MongoDB
             await mongo.perfilDisqueraModel.updateOne(
                 { idDisqueraSql: idDisquera },
                 {
@@ -65,9 +62,8 @@ disqueraCtl.gestionarPerfilDisquera = async (req, res) => {
                 }
             );
 
-            return res.apiResponse(null, 200, 'Perfil de disquera actualizado');
+            return res.apiResponse(null, 200, 'Success');
         } else {
-            // Crear nuevo
             const datosSql = {
                 nombreDisquera,
                 correo,
@@ -78,7 +74,6 @@ disqueraCtl.gestionarPerfilDisquera = async (req, res) => {
             const nuevaDisquera = await orm.perfilDisquera.create(datosSql);
             idDisquera = nuevaDisquera.idDisquera;
 
-            // Crear en MongoDB
             const datosMongo = {
                 direccion,
                 telefono: cifrarDatos(telefono),
@@ -93,13 +88,13 @@ disqueraCtl.gestionarPerfilDisquera = async (req, res) => {
             return res.apiResponse(
                 { idDisquera }, 
                 201, 
-                'Perfil de disquera creado exitosamente'
+                'Success'
             );
         }
 
     } catch (error) {
-        console.error('Error al gestionar perfil disquera:', error);
-        return res.apiError('Error al gestionar el perfil', 500);
+        console.error('Error', error);
+        return res.apiError('Error', 500);
     }
 };
 
@@ -115,10 +110,10 @@ disqueraCtl.obtenerEstadisticas = async (req, res) => {
                 (SELECT COUNT(*) FROM registro_ventas WHERE estado = 'activo') as totalVentas
         `);
 
-        return res.apiResponse(estadisticas[0], 200, 'Estadísticas obtenidas');
+        return res.apiResponse(estadisticas[0], 200, 'Success');
     } catch (error) {
-        console.error('Error al obtener estadísticas:', error);
-        return res.apiError('Error interno del servidor', 500);
+        console.error('Error', error);
+        return res.apiError('Error', 500);
     }
 };
 

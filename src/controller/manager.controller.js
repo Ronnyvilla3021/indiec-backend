@@ -9,7 +9,7 @@ const descifrarSeguro = (dato) => {
     try {
         return dato ? descifrarDatos(dato) : '';
     } catch (error) {
-        console.error('Error al descifrar:', error);
+        console.error('Error');
         return '';
     }
 };
@@ -38,7 +38,7 @@ managerCtl.mostrarManagers = async (req, res) => {
 
         return res.json(managersCompletos);
     } catch (error) {
-        console.error('Error al mostrar managers:', error);
+        console.error('Error');
         return res.status(500).json({ message: 'Error al obtener los managers', error: error.message });
     }
 };
@@ -74,12 +74,12 @@ managerCtl.crearManager = async (req, res) => {
         await mongo.managerModel.create(managerMongo);
 
         return res.status(201).json({ 
-            message: 'Manager creado exitosamente',
+            message: 'Success',
             idManager: nuevoManager.idManager
         });
 
     } catch (error) {
-        console.error('Error al crear manager:', error);
+        console.error('Error');
         return res.status(500).json({ 
             message: 'Error al crear el manager', 
             error: error.message 
@@ -122,10 +122,10 @@ managerCtl.actualizarManager = async (req, res) => {
             }
         );
 
-        return res.json({ message: 'Manager actualizado exitosamente' });
+        return res.json({ message: 'Success' });
 
     } catch (error) {
-        console.error('Error al actualizar manager:', error);
+        console.error('Error');
         return res.status(500).json({ message: 'Error al actualizar el manager', error: error.message });
     }
 };
@@ -145,9 +145,9 @@ managerCtl.eliminarManager = async (req, res) => {
             return res.status(404).json({ message: 'Manager no encontrado' });
         }
 
-        return res.json({ message: 'Manager desactivado exitosamente' });
+        return res.json({ message: 'Success' });
     } catch (error) {
-        console.error('Error al eliminar manager:', error);
+        console.error('Error');
         return res.status(500).json({ message: 'Error al desactivar el manager', error: error.message });
     }
 };

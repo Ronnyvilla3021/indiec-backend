@@ -24,10 +24,10 @@ albumCtl.obtenerAlbumes = async (req, res) => {
             })
         );
 
-        return res.apiResponse(albumesCompletos, 200, 'Álbumes obtenidos exitosamente');
+        return res.apiResponse(albumesCompletos, 'Succes');
     } catch (error) {
-        console.error('Error al obtener álbumes:', error);
-        return res.apiError('Error interno del servidor', 500);
+        console.error('Error', error);
+        return res.apiError('Error ');
     }
 };
 
@@ -62,13 +62,13 @@ albumCtl.crearAlbum = async (req, res) => {
 
         return res.apiResponse(
             { idAlbum }, 
-            201, 
-            'Álbum creado exitosamente'
+             
+            'Succes'
         );
 
     } catch (error) {
-        console.error('Error al crear álbum:', error);
-        return res.apiError('Error al crear el álbum', 500);
+        console.error('Error ', error);
+        return res.apiError('Error ');
     }
 };
 

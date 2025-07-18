@@ -1,41 +1,48 @@
-const paginaCtl = {}
-const orm = require('../Database/dataBase.orm')
-const sql = require('../Database/dataBase.sql')
-const mongo = require('../Database/dataBaseMongose')
-const { cifrarDatos, descifrarDatos } = require('../lib/encrypDates')
+const paginaCtl = {};
+const orm = require('../Database/dataBase.orm');
+const sql = require('../Database/dataBase.sql');
+const mongo = require('../Database/dataBaseMongose');
+const { cifrarDatos, descifrarDatos } = require('../lib/encrypDates');
 
 function safeDecrypt(data) {
     try {
         return descifrarDatos(data);
     } catch (error) {
-        console.error('Error al descifrar datos:', error.message);
-        return ''; // Devolver una cadena vacía si ocurre un error
+        console.error('Error');
+        return ''; // Devolver cadena vacía si falla descifrar
     }
 }
 
 paginaCtl.mostrarPagina = async (req, res) => {
-    const [listaPagina] = await sql.promise().query('SELECT * FROM 	pages')
-    const pagina = await mongo.pageModel.findOne({ where: { idPageSql: listaPagina[0].idPage } })
-    const paginas = listaPagina[0]
-    const data = {
-        paginas,
-        pagina
+    try {
+        const [listaPagina] = await sql.promise().query('SELECT * FROM pages');
+        if (!listaPagina.length) {
+            return res.status(404).json({ message: 'No se encontraron páginas' });
+        }
+
+        const pagina = await mongo.pageModel.findOne({ idPageSql: listaPagina[0].idPage });
+        const paginas = listaPagina[0];
+
+        return res.json({ paginas, pagina });
+    } catch (error) {
+        console.error('Error');
+        return res.status(500).json({ message: 'Error al obtener la página', error: error.message });
     }
-    return data
-}
+};
 
 paginaCtl.mandarPagina = async (req, res) => {
-    const id = req.user.idUser
     try {
-        const {namePage, description, statePage, visionPage, misionPage, celularPage, correoPagina} = req.body
+        const { namePage, description, statePage, visionPage, misionPage, celularPage, correoPagina } = req.body;
+
         const envioSQL = {
             namePage,
             description,
             statePage,
             createPage: new Date().toLocaleString(),
-        }
-        const envioPage = await orm.pagina.create(envioSQL)
-        const idPagina = envioPage.insertId
+        };
+
+        const envioPage = await orm.pagina.create(envioSQL);
+        const idPagina = envioPage.insertId || envioPage.idPage || envioPage.id; // Ajusta según respuesta ORM
 
         const envioMongo = {
             visionPage,
@@ -44,16 +51,19 @@ paginaCtl.mandarPagina = async (req, res) => {
             correoPagina,
             idPageSql: idPagina,
             createPageMongo: new Date().toLocaleString(),
+        };
+
+        await mongo.pageModel.create(envioMongo);
+
+        // Si usas flash en un framework (ejemplo express-flash), asegúrate que está instalado y configurado
+        if (res.flash) {
+            res.flash('success', 'Éxito al guardar');
         }
-
-        await mongo.pageModel.create(envioMongo)
-        res.flash('success','Exito al guardar')
-        return ('exito al guardar')
-
+        return res.json({ message: 'Success' });
     } catch (error) {
-        res.json('error al envio', error);
-        return error
+        console.error('Error');
+        return res.status(500).json({ message: 'Error al guardar la página', error: error.message });
     }
-}
+};
 
-module.exports = paginaCtl
+module.exports = paginaCtl;

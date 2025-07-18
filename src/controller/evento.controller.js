@@ -24,10 +24,10 @@ eventoCtl.obtenerEventos = async (req, res) => {
             })
         );
 
-        return res.apiResponse(eventosCompletos, 200, 'Eventos obtenidos exitosamente');
+        return res.apiResponse(eventosCompletos, 200, 'Success');
     } catch (error) {
-        console.error('Error al obtener eventos:', error);
-        return res.apiError('Error interno del servidor', 500);
+        console.error('Error', error);
+        return res.apiError('Error', 500);
     }
 };
 
@@ -36,7 +36,6 @@ eventoCtl.crearEvento = async (req, res) => {
     try {
         const { nombreEvento, ubicacion, fecha, generoMusical, contacto, capacidad, descripcion } = req.body;
 
-        // Crear en SQL
         const datosSql = {
             nombreEvento,
             ubicacion,
@@ -49,7 +48,6 @@ eventoCtl.crearEvento = async (req, res) => {
         const nuevoEvento = await orm.evento.create(datosSql);
         const idEvento = nuevoEvento.idEvento;
 
-        // Crear en MongoDB
         const datosMongo = {
             contacto,
             capacidad: parseInt(capacidad),
@@ -64,12 +62,12 @@ eventoCtl.crearEvento = async (req, res) => {
         return res.apiResponse(
             { idEvento }, 
             201, 
-            'Evento creado exitosamente'
+            'Success'
         );
 
     } catch (error) {
-        console.error('Error al crear evento:', error);
-        return res.apiError('Error al crear el evento', 500);
+        console.error('Error', error);
+        return res.apiError('Error', 500);
     }
 };
 

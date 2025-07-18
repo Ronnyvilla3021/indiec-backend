@@ -10,21 +10,21 @@ authCtl.register = async (req, res, next) => {
         // Validar errores de entrada
         const errors = validationResult(req);
         if (!errors.isEmpty()) {
-            return res.apiError('Validation errors', 400, errors.array());
+            return res.apiError('Error', 400, errors.array());
         }
 
         passport.authenticate('local.Signup', (err, user, info) => {
             if (err) {
-                return res.apiError('Internal server error', 500);
+                return res.apiError('Error', 500);
             }
             if (!user) {
-                return res.apiError(info.message || 'Registration failed', 400);
+                return res.apiError('Error', 400);
             }
             
             // Login automático después del registro
             req.logIn(user, (err) => {
                 if (err) {
-                    return res.apiError('Login after registration failed', 500);
+                    return res.apiError('Error', 500);
                 }
                 
                 return res.apiResponse({
@@ -35,13 +35,13 @@ authCtl.register = async (req, res, next) => {
                         username: user.userName
                     },
                     token: req.sessionID
-                }, 201, 'User registered successfully');
+                }, 201, 'Success');
             });
         })(req, res, next);
         
     } catch (error) {
         console.error('Registration error:', error);
-        res.apiError('Internal server error', 500);
+        res.apiError('Error', 500);
     }
 };
 
@@ -50,20 +50,20 @@ authCtl.login = async (req, res, next) => {
     try {
         const errors = validationResult(req);
         if (!errors.isEmpty()) {
-            return res.apiError('Validation errors', 400, errors.array());
+            return res.apiError('Error', 400, errors.array());
         }
 
         passport.authenticate('local.Signin', (err, user, info) => {
             if (err) {
-                return res.apiError('Internal server error', 500);
+                return res.apiError('Error', 500);
             }
             if (!user) {
-                return res.apiError(info.message || 'Invalid credentials', 401);
+                return res.apiError('Error', 401);
             }
             
             req.logIn(user, (err) => {
                 if (err) {
-                    return res.apiError('Login failed', 500);
+                    return res.apiError('Error', 500);
                 }
                 
                 return res.apiResponse({
@@ -74,13 +74,13 @@ authCtl.login = async (req, res, next) => {
                         username: user.userName
                     },
                     token: req.sessionID
-                }, 200, 'Login successful');
+                }, 200, 'Success');
             });
         })(req, res, next);
         
     } catch (error) {
         console.error('Login error:', error);
-        res.apiError('Internal server error', 500);
+        res.apiError('Error', 500);
     }
 };
 
@@ -88,14 +88,14 @@ authCtl.login = async (req, res, next) => {
 authCtl.logout = (req, res) => {
     req.logout((err) => {
         if (err) {
-            return res.apiError('Logout failed', 500);
+            return res.apiError('Error', 500);
         }
         req.session.destroy((err) => {
             if (err) {
-                return res.apiError('Session destruction failed', 500);
+                return res.apiError('Error', 500);
             }
             res.clearCookie('secureSessionId');
-            return res.apiResponse(null, 200, 'Logout successful');
+            return res.apiResponse(null, 200, 'Success');
         });
     });
 };
@@ -103,7 +103,7 @@ authCtl.logout = (req, res) => {
 // Get current user
 authCtl.getProfile = (req, res) => {
     if (!req.isAuthenticated()) {
-        return res.apiError('Not authenticated', 401);
+        return res.apiError('Error', 401);
     }
     
     const user = req.user;
@@ -114,7 +114,7 @@ authCtl.getProfile = (req, res) => {
             email: user.emailUser,
             username: user.userName
         }
-    }, 200, 'Profile retrieved successfully');
+    }, 200, 'Success');
 };
 
 module.exports = authCtl;

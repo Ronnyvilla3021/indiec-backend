@@ -29,12 +29,12 @@ ventasCtl.registrarVenta = async (req, res) => {
         return res.apiResponse(
             { idVenta, total: cantidad * precioUnitario }, 
             201, 
-            'Venta registrada exitosamente'
+            'Success'
         );
 
     } catch (error) {
-        console.error('Error al registrar venta:', error);
-        return res.apiError('Error al registrar la venta', 500);
+        console.error('Error');
+        return res.apiError('Error', 500);
     }
 };
 
@@ -81,11 +81,11 @@ ventasCtl.obtenerReporteVentas = async (req, res) => {
         return res.apiResponse({
             ventas,
             estadisticas
-        }, 200, 'Reporte de ventas obtenido');
+        }, 200, 'Success');
 
     } catch (error) {
-        console.error('Error al obtener reporte de ventas:', error);
-        return res.apiError('Error interno del servidor', 500);
+        console.error('Error');
+        return res.apiError('Error', 500);
     }
 };
 
